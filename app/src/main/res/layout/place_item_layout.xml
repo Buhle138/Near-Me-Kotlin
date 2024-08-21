@@ -6,7 +6,7 @@
 
         <variable
             name="googlePlaceModel"
-            type="com.example.nearmeapplication.models.googlePlaceModel.GooglePlaceModel" />
+            type="com.example.nearmeapplication.models.GooglePlaceModel" />
 
         <variable
             name="listener"
@@ -31,7 +31,7 @@
             android:weightSum="2">
 
             <ImageView
-                loadImage="@{googlePlaceModel.icon}"
+                loadImage="${googlePlaceModel.icon}"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="0.5"
@@ -54,7 +54,7 @@
                         android:id="@+id/txtPlaceDRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{googlePlaceModel.rating!=null?String.valueOf(googlePlaceModel.rating):`New`,default=3.4}"
+                        android:text="${googlePlaceModel.rating!=null?String.valueOf(googlePlaceModel.rating):`New`,default=3.4}"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_rating"

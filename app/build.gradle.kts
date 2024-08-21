@@ -47,7 +47,7 @@ android {
 
 dependencies {
 
-
+    implementation("com.squareup.retrofit2:converter-moshi:2.4.0")
     implementation("com.google.firebase:firebase-perf")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
