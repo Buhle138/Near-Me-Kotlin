@@ -6,11 +6,11 @@
 
         <variable
             name="googlePlaceModel"
-            type="com.example.nearmekotlindemo.models.googlePlaceModel.GooglePlaceModel" />
+            type="com.example.nearmeapplication.models.googlePlaceModel.GooglePlaceModel" />
 
         <variable
             name="listener"
-            type="com.example.nearmekotlindemo.interfaces.NearLocationInterface" />
+            type="com.example.nearmeapplication.interfaces.NearLocationInterface" />
 
 
     </data>
