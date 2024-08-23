@@ -22,7 +22,7 @@ private const val ARG_PARAM2 = "param2"
 class HomeFragment : Fragment() {
 
 
-private lateinit var binding:FragmentHomeBinding
+private lateinit var binding:FragmenHomeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
