@@ -49,7 +49,19 @@ android {
 
 dependencies {
 
-    implementation("com.squareup.retrofit2:converter-moshi:2.4.0")
+    //adding normal dependencies
+    implementation("androidx.core:core-ktx:1.5.0")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("com.google.android.material:material:1.3.0")
+
+    implementation("com.squareup.retrofit2:converter-moshi:2.6.0")
+
+    //adding the dependencies
+    implementation("com.github.bumptech.glide:glide:4.11.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
+
     implementation("com.google.firebase:firebase-perf")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")

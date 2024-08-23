@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout>
 
     <data>
-        <import type="android.view.View"/>
 
         <variable
             name="googlePlaceModel"
@@ -32,7 +31,7 @@
             android:weightSum="2">
 
             <ImageView
-                loadImage="${googlePlaceModel.icon}"
+                loadImage="@{googlePlaceModel.icon}"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="0.5"
@@ -55,7 +54,7 @@
                         android:id="@+id/txtPlaceDRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="${googlePlaceModel.rating!=null?String.valueOf(googlePlaceModel.rating):`New`,default=3.4}"
+                        android:text="@{googlePlaceModel.rating!=null?String.valueOf(googlePlaceModel.rating):`New`,default=3.4}"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_rating"
@@ -67,7 +66,7 @@
                         android:layout_toEndOf="@+id/txtPlaceDRating"
                         android:paddingStart="5dp"
                         android:paddingEnd="1dp"
-                        android:text="${googlePlaceModel.userRatingsTotal!=null?`(`+String.valueOf(googlePlaceModel.userRatingsTotal)+`)`:``,default=`(123)`}"
+                        android:text="@{googlePlaceModel.userRatingsTotal!=null?`(`+String.valueOf(googlePlaceModel.userRatingsTotal)+`)`:``,default=`(123)`}"
                         android:textColor="@color/itemTextColor" />
 
                     <ImageView
@@ -75,19 +74,17 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_alignParentEnd="true"
-                        android:onClick="${()->listener.onSaveClick(googlePlaceModel)}"
-                        android:src="${googlePlaceModel.saved==true?@drawable/ic_bookmarked:@drawable/ic_bookmark}"
-                        app:tint="@color/primaryColor"
-                        tools:ignore="OnClick" />
+                        android:onClick="@{()->listener.onSaveClick(googlePlaceModel)}"
+                        android:src="@{googlePlaceModel.saved==true?@drawable/ic_bookmarked:@drawable/ic_bookmark}"
+                        app:tint="@color/primaryColor" />
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_toStartOf="@+id/imgSaveLocation"
-                        android:onClick="${()->listener.onDirectionClick(googlePlaceModel)}"
+                        android:onClick="@{()->listener.onDirectionClick(googlePlaceModel)}"
                         android:src="@drawable/ic_direction"
-                        app:tint="@color/primaryColor"
-                        tools:ignore="OnClick" />
+                        app:tint="@color/primaryColor" />
                 </RelativeLayout>
 
                 <TextView
@@ -97,7 +94,7 @@
                     android:layout_marginTop="10dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="${googlePlaceModel.name!=null?googlePlaceModel.name:`No Name`,default=`Place Name`}"
+                    android:text="@{googlePlaceModel.name!=null?googlePlaceModel.name:`No Name`,default=`Place Name`}"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -108,7 +105,7 @@
                     android:layout_marginTop="6dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="${googlePlaceModel.vicinity!=null?googlePlaceModel.vicinity:`No Address`,default=`Place Address`}"
+                    android:text="@{googlePlaceModel.vicinity!=null?googlePlaceModel.vicinity:`No Address`,default=`Place Address`}"
                     android:textColor="@color/black" />
 
             </LinearLayout>
