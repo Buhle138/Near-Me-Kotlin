@@ -1,7 +1,7 @@
-package com.example.nearmeapplication.models
+package com.example.nearmeapplication.models.googlePlaceModel
 
 
-import  com.squareup.moshi.Json
+import com.squareup.moshi.Json
 
 data class GooglePlaceModel(
     @field:Json(name = "business_status")

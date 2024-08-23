@@ -1,4 +1,4 @@
-package com.example.nearmeapplication.models
+package com.example.nearmeapplication.models.googlePlaceModel
 
 import com.squareup.moshi.Json
 import android.widget.ImageView

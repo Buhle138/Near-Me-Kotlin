@@ -5,19 +5,23 @@ plugins {
     id("com.google.firebase.firebase-perf")
     id("kotlin-kapt")
     id("com.google.gms.google-services")
+    id("kotlin-android")
 
 }
 
 android {
     namespace = "com.example.nearmeapplication"
     compileSdk = 34
+    buildToolsVersion = "30.0.3"
 
     defaultConfig {
         applicationId = "com.example.nearmeapplication"
-        minSdk = 24
+        minSdk = 23
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,6 +52,12 @@ android {
 }
 
 dependencies {
+
+    // Navigation Component
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
+
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
     //adding normal dependencies
     implementation("androidx.core:core-ktx:1.5.0")
