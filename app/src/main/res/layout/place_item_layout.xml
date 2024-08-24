@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
 
     <data>
 
         <variable
             name="googlePlaceModel"
-            type="com.example.nearmeapplication.models.GooglePlaceModel" />
+            type="com.example.nearmeapplication.models.googlePlaceModel.GooglePlaceModel" />
 
         <variable
             name="listener"
@@ -15,8 +17,7 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -31,7 +32,7 @@
             android:weightSum="2">
 
             <ImageView
-                loadImage="@{googlePlaceModel.icon}"
+                loadImage="@{google}"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="0.5"
@@ -69,14 +70,14 @@
                         android:text="@{googlePlaceModel.userRatingsTotal!=null?`(`+String.valueOf(googlePlaceModel.userRatingsTotal)+`)`:``,default=`(123)`}"
                         android:textColor="@color/itemTextColor" />
 
-                    <ImageView
-                        android:id="@+id/imgSaveLocation"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_alignParentEnd="true"
-                        android:onClick="@{()->listener.onSaveClick(googlePlaceModel)}"
-                        android:src="@{googlePlaceModel.saved==true?@drawable/ic_bookmarked:@drawable/ic_bookmark}"
-                        app:tint="@color/primaryColor" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imgSaveLocation"-->
+<!--                        android:layout_width="30dp"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:layout_alignParentEnd="true"-->
+<!--                        android:onClick="@{()->listener.onSaveClick(googlePlaceModel)}"-->
+<!--                        android:src="@{googlePlaceModel.saved==true?@drawable/ic_bookmarked:@drawable/ic_bookmark}"-->
+<!--                        app:tint="@color/primaryColor" />-->
 
                     <ImageView
                         android:layout_width="30dp"
@@ -112,4 +113,6 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+
 </layout>
