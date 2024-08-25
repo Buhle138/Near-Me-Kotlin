@@ -44,14 +44,22 @@ android {
     }
 
     buildFeatures{
-        dataBinding; true
-        viewBinding; true
+        dataBinding = true
+        viewBinding = true
 
     }
 
 }
 
 dependencies {
+
+
+    //google map dependencies
+    implementation("com.google.android.libraries.places:places:3.5.0")
+    implementation("com.google.maps.android:android-maps-utils:2.2.3")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.maps:google-maps-services:0.2.9")
+    implementation("org.slf4j:slf4j-simple:1.7.25")
 
     // Navigation Component
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
