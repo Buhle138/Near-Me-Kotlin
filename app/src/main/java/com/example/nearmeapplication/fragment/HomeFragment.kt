@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +48,7 @@ private lateinit var binding: FragmentHomeBinding
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private var permissionToRequest = mutableListOf<String>()
     private var isLocationPermissionOk = false
+    private var isTrafficEnable: Boolean = false
     private lateinit var locationRequest: com.google.android.gms.location.LocationRequest
     private lateinit var locationCallback: LocationCallback
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -99,6 +101,43 @@ private lateinit var binding: FragmentHomeBinding
             chip.isCheckedIconVisible = false
             binding.placesGroup.addView(chip)
         }
+
+        binding.enableTraffic.setOnClickListener {
+
+            if (isTrafficEnable) {
+                mGoogleMap?.apply {
+                    isTrafficEnabled = false
+                    isTrafficEnable = false
+                }
+            } else {
+                mGoogleMap?.apply {
+                    isTrafficEnabled = true
+                    isTrafficEnable = true
+                }
+            }
+        }
+
+        binding.currentLocation.setOnClickListener { getCurrentLocation() }
+
+        binding.btnMapType.setOnClickListener {
+            val popupMenu = PopupMenu(requireContext(), it)
+
+            popupMenu.apply {
+                menuInflater.inflate(R.menu.map_type_menu, popupMenu.menu)
+                setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+
+                        R.id.btnNormal -> mGoogleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+                        R.id.btnSatellite -> mGoogleMap?.mapType = GoogleMap.MAP_TYPE_SATELLITE
+                        R.id.btnTerrain -> mGoogleMap?.mapType = GoogleMap.MAP_TYPE_TERRAIN
+                    }
+                    true
+                }
+
+                show()
+            }
+        }
+
 
     }
 
