@@ -55,6 +55,7 @@ private lateinit var binding: FragmentHomeBinding
     private lateinit var currentLocation: Location
     private var currentMarker: Marker? = null
     private var infoWindowAdapter: GoogleMap.InfoWindowAdapter? = null
+    private var radius = 1500
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -136,6 +137,22 @@ private lateinit var binding: FragmentHomeBinding
 
                 show()
             }
+        }
+
+        binding.placesGroup.setOnCheckedChangeListener { _, checkedId ->
+
+            if (checkedId != -1) {
+                val placeModel = AppConstant.placesName[checkedId - 1]
+                binding.edtPlaceName.setText(placeModel.name)
+                getNearByPlace(placeModel.placeType)
+            }
+        }
+
+        setUpRecyclerView()
+
+        lifecycleScope.launchWhenStarted {
+            userSavedLocaitonId = locationViewModel.getUserLocationId()
+            Log.d("TAG", "onViewCreated: ${userSavedLocaitonId.size}")
         }
 
 
@@ -308,6 +325,59 @@ private lateinit var binding: FragmentHomeBinding
         if (fusedLocationProviderClient != null) {
             startLocationUpdates()
             currentMarker?.remove()
+        }
+    }
+
+    private fun getNearByPlace(placeType: String) {
+        val url = ("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
+                + currentLocation.latitude + "," + currentLocation.longitude
+                + "&radius=" + radius + "&type=" + placeType + "&key=" +
+                resources.getString(R.string.API_KEY))
+
+        lifecycleScope.launchWhenStarted {
+            locationViewModel.getNearByPlace(url).collect {
+                when (it) {
+                    is State.Loading -> {
+                        if (it.flag == true) {
+                            loadingDialog.startLoading()
+                        }
+                    }
+
+                    is State.Success -> {
+                        loadingDialog.stopLoading()
+                        val googleResponseModel: GoogleResponseModel =
+                            it.data as GoogleResponseModel
+
+                        if (googleResponseModel.googlePlaceModelList !== null &&
+                            googleResponseModel.googlePlaceModelList.isNotEmpty()
+                        ) {
+                            googlePlaceList.clear()
+                            mGoogleMap?.clear()
+
+                            for (i in googleResponseModel.googlePlaceModelList.indices) {
+
+                                googleResponseModel.googlePlaceModelList[i].saved =
+                                    userSavedLocaitonId.contains(googleResponseModel.googlePlaceModelList[i].placeId)
+                                googlePlaceList.add(googleResponseModel.googlePlaceModelList[i])
+                                addMarker(googleResponseModel.googlePlaceModelList[i], i)
+                            }
+                            googlePlaceAdapter.setGooglePlaces(googlePlaceList)
+                        } else {
+                            mGoogleMap?.clear()
+                            googlePlaceList.clear()
+
+                        }
+
+                    }
+                    is State.Failed -> {
+                        loadingDialog.stopLoading()
+                        Snackbar.make(
+                            binding.root, it.error,
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
