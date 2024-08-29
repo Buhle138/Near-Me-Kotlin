@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.nearmeapplication.R
 import com.example.nearmeapplication.adapter.InfoWindowAdapter
 import com.example.nearmeapplication.databinding.FragmentHomeBinding
@@ -331,8 +332,7 @@ private lateinit var binding: FragmentHomeBinding
     private fun getNearByPlace(placeType: String) {
         val url = ("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
                 + currentLocation.latitude + "," + currentLocation.longitude
-                + "&radius=" + radius + "&type=" + placeType + "&key=" +
-                resources.getString(R.string.API_KEY))
+                + "&radius=" + radius + "&type=" + placeType + "&key=" + "AIzaSyCTHsiN5S3iNZulNWCfo3kKLtZhrpk1AMM"
 
         lifecycleScope.launchWhenStarted {
             locationViewModel.getNearByPlace(url).collect {
