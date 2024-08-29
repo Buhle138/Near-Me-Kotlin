@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("com.google.android.material:material:1.3.0")
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.6.0")
 
     //adding the dependencies
