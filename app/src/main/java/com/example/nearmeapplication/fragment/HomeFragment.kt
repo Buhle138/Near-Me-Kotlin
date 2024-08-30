@@ -17,12 +17,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.nearmeapplication.R
 import com.example.nearmeapplication.adapter.InfoWindowAdapter
 import com.example.nearmeapplication.databinding.FragmentHomeBinding
 import com.example.nearmeapplication.permissions.AppPermissions
 import com.example.nearmeapplication.utility.LoadingDialog
+import com.example.nearmeapplication.utility.State
+import com.example.nearmeapplication.viewModels.LocationViewModel
 import com.example.nearmekotlindemo.constant.AppConstant
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -38,6 +41,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
+
 
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -56,6 +60,7 @@ private lateinit var binding: FragmentHomeBinding
     private lateinit var currentLocation: Location
     private var currentMarker: Marker? = null
     private var infoWindowAdapter: GoogleMap.InfoWindowAdapter? = null
+    private val locationViewModel: LocationViewModel by viewModels<LocationViewModel>()
     private var radius = 1500
 
     override fun onCreateView(
@@ -334,7 +339,8 @@ private lateinit var binding: FragmentHomeBinding
                 + currentLocation.latitude + "," + currentLocation.longitude
                 + "&radius=" + radius + "&type=" + placeType + "&key=" + "AIzaSyCTHsiN5S3iNZulNWCfo3kKLtZhrpk1AMM"
 
-        lifecycleScope.launchWhenStarted {
+
+        lifecycleScope.repeatOnLifecycle {
             locationViewModel.getNearByPlace(url).collect {
                 when (it) {
                     is State.Loading -> {

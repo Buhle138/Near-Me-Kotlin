@@ -53,6 +53,10 @@ android {
 
 dependencies {
 
+    //coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-native-mt")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.5")
 
     //google map dependencies
     implementation("com.google.android.libraries.places:places:3.5.0")
