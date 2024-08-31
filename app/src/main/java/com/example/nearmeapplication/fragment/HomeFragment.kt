@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.nearmeapplication.R
 import com.example.nearmeapplication.adapter.InfoWindowAdapter
 import com.example.nearmeapplication.databinding.FragmentHomeBinding
+import com.example.nearmeapplication.models.googlePlaceModel.GoogleResponseModel
 import com.example.nearmeapplication.permissions.AppPermissions
 import com.example.nearmeapplication.utility.LoadingDialog
 import com.example.nearmeapplication.utility.State
@@ -337,10 +338,12 @@ private lateinit var binding: FragmentHomeBinding
     private fun getNearByPlace(placeType: String) {
         val url = ("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
                 + currentLocation.latitude + "," + currentLocation.longitude
-                + "&radius=" + radius + "&type=" + placeType + "&key=" + "AIzaSyCTHsiN5S3iNZulNWCfo3kKLtZhrpk1AMM"
+                + "&radius=" + radius + "&type=" + placeType + "&key=" + "AIzaSyCTHsiN5S3iNZulNWCfo3kKLtZhrpk1AMM"))
 
 
-        lifecycleScope.repeatOnLifecycle {
+
+
+        lifecycleScope.launchWhenStarted {
             locationViewModel.getNearByPlace(url).collect {
                 when (it) {
                     is State.Loading -> {

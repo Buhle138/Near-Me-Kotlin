@@ -85,6 +85,12 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
 
+
+    //Circular ImageView librarg
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    //shape library to draw curves
+    implementation("com.victor:lib:1.0.4")
+
     implementation("com.google.firebase:firebase-perf")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
