@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.nearmeapplication.R
 import com.example.nearmeapplication.adapter.InfoWindowAdapter
 import com.example.nearmeapplication.databinding.FragmentHomeBinding
+import com.example.nearmeapplication.models.googlePlaceModel.GooglePlaceModel
 import com.example.nearmeapplication.models.googlePlaceModel.GoogleResponseModel
 import com.example.nearmeapplication.permissions.AppPermissions
 import com.example.nearmeapplication.utility.LoadingDialog
@@ -390,6 +391,20 @@ private lateinit var binding: FragmentHomeBinding
         }
     }
 
+    private fun addMarker(googlePlaceModel: GooglePlaceModel, position: Int) {
+        val markerOptions = MarkerOptions()
+            .position(
+                LatLng(
+                    googlePlaceModel.geometry?.location?.lat!!,
+                    googlePlaceModel.geometry.location.lng!!
+                )
+            )
+            .title(googlePlaceModel.name)
+            .snippet(googlePlaceModel.vicinity)
 
+        markerOptions.icon(getCustomIcon())
+        mGoogleMap?.addMarker(markerOptions)?.tag = position
+
+    }
 
 }
