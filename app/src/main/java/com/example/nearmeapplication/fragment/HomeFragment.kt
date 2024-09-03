@@ -402,7 +402,7 @@ private lateinit var binding: FragmentHomeBinding
             .title(googlePlaceModel.name)
             .snippet(googlePlaceModel.vicinity)
 
-        markerOptions.icon(getCustomIcon())
+        markerOptions.icon(getCustomIcons())
         mGoogleMap?.addMarker(markerOptions)?.tag = position
 
     }
