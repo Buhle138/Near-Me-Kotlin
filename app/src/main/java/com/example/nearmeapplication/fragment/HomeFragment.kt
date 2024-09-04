@@ -391,7 +391,7 @@ private lateinit var binding: FragmentHomeBinding
         }
     }
 
-    private fun addMarker(googlePlaceModel: GooglePlaceModel, position: Int) {
+    private fun addMarkers(googlePlaceModel: GooglePlaceModel, position: Int) {
         val markerOptions = MarkerOptions()
             .position(
                 LatLng(
