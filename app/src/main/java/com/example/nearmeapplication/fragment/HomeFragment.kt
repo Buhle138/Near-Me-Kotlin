@@ -340,21 +340,17 @@ private lateinit var binding: FragmentHomeBinding
         val url = ("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
                 + currentLocation.latitude + "," + currentLocation.longitude
                 + "&radius=" + radius + "&type=" + placeType + "&key=" + "AIzaSyCTHsiN5S3iNZulNWCfo3kKLtZhrpk1AMM"))
-
-
-
-
         lifecycleScope.launchWhenStarted {
             locationViewModel.getNearByPlace(url).collect {
                 when (it) {
                     is State.Loading -> {
                         if (it.flag == true) {
-                            loadingDialog.startLoading()
+                            Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
                         }
                     }
 
                     is State.Success -> {
-                        loadingDialog.stopLoading()
+
                         val googleResponseModel: GoogleResponseModel =
                             it.data as GoogleResponseModel
 
@@ -391,20 +387,20 @@ private lateinit var binding: FragmentHomeBinding
         }
     }
 
-    private fun addMarkerss(googlePlaceModel: GooglePlaceModel, position: Int) {
-        val markerOptions = MarkerOptions()
-            .position(
-                LatLng(
-                    googlePlaceModel.geometry?.location?.lat!!,
-                    googlePlaceModel.geometry.location.lng!!
-                )
-            )
-            .title(googlePlaceModel.name)
-            .snippet(googlePlaceModel.vicinity)
-
-        markerOptions.icon(getCustomIcons())
-        mGoogleMap?.addMarker(markerOptions)?.tag = position
-
-    }
+//    private fun addMarkerss(googlePlaceModel: GooglePlaceModel, position: Int) {
+//        val markerOptions = MarkerOptions()
+//            .position(
+//                LatLng(
+//                    googlePlaceModel.geometry?.location?.lat!!,
+//                    googlePlaceModel.geometry.location.lng!!
+//                )
+//            )
+//            .title(googlePlaceModel.name)
+//            .snippet(googlePlaceModel.vicinity)
+//
+//        markerOptions.icon(getCustomIcons())
+//        mGoogleMap?.addMarker(markerOptions)?.tag = position
+//
+//    }
 
 }
