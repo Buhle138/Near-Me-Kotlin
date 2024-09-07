@@ -2,7 +2,10 @@ package com.example.nearmeapplication.fragment
 
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -15,13 +18,20 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.example.nearmeapplication.R
+import com.example.nearmeapplication.adapter.GooglePlaceAdapter
 import com.example.nearmeapplication.adapter.InfoWindowAdapter
 import com.example.nearmeapplication.databinding.FragmentHomeBinding
+import com.example.nearmeapplication.interfaces.NearLocationInterface
 import com.example.nearmeapplication.models.googlePlaceModel.GooglePlaceModel
 import com.example.nearmeapplication.models.googlePlaceModel.GoogleResponseModel
 import com.example.nearmeapplication.permissions.AppPermissions
@@ -37,20 +47,18 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SnapHelper
-import com.example.nearmeapplication.adapter.
+import com.example.nearmeapplication.activities.DirectionActivity
 
 
-class HomeFragment : Fragment(), OnMapReadyCallback {
+
+class HomeFragment : Fragment(), OnMapReadyCallback, NearLocationInterface, GoogleMap.OnMapClickListener {
 
 private lateinit var binding: FragmentHomeBinding
     private var mGoogleMap: GoogleMap? = null
@@ -66,7 +74,10 @@ private lateinit var binding: FragmentHomeBinding
     private lateinit var currentLocation: Location
     private var currentMarker: Marker? = null
     private var infoWindowAdapter: GoogleMap.InfoWindowAdapter? = null
+    private lateinit var googlePlaceAdapter: GooglePlaceAdapter
     private val locationViewModel: LocationViewModel by viewModels<LocationViewModel>()
+    private lateinit var googlePlaceList: ArrayList<GooglePlaceModel>
+    private var userSavedLocaitonId: ArrayList<String> = ArrayList()
     private var radius = 1500
 
     override fun onCreateView(
@@ -343,7 +354,7 @@ private lateinit var binding: FragmentHomeBinding
     private fun getNearByPlace(placeType: String) {
         val url = ("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
                 + currentLocation.latitude + "," + currentLocation.longitude
-                + "&radius=" + radius + "&type=" + placeType + "&key=" + "AIzaSyCTHsiN5S3iNZulNWCfo3kKLtZhrpk1AMM"))
+                + "&radius=" + radius + "&type=" + placeType + "&key=" + "AIzaSyCTHsiN5S3iNZulNWCfo3kKLtZhrpk1AMM")
         lifecycleScope.launchWhenStarted {
             locationViewModel.getNearByPlace(url).collect {
                 when (it) {
@@ -425,20 +436,105 @@ private lateinit var binding: FragmentHomeBinding
         snapHelper.attachToRecyclerView(binding.placesRecyclerView)
     }
 
-//    private fun addMarkerss(googlePlaceModel: GooglePlaceModel, position: Int) {
-//        val markerOptions = MarkerOptions()
-//            .position(
-//                LatLng(
-//                    googlePlaceModel.geometry?.location?.lat!!,
-//                    googlePlaceModel.geometry.location.lng!!
-//                )
-//            )
-//            .title(googlePlaceModel.name)
-//            .snippet(googlePlaceModel.vicinity)
-//
-//        markerOptions.icon(getCustomIcons())
-//        mGoogleMap?.addMarker(markerOptions)?.tag = position
-//
-//    }
+    private fun addMarker(googlePlaceModel: GooglePlaceModel, position: Int) {
+        val markerOptions = MarkerOptions()
+            .position(
+                LatLng(
+                    googlePlaceModel.geometry?.location?.lat!!,
+                    googlePlaceModel.geometry.location.lng!!
+                )
+            )
+            .title(googlePlaceModel.name)
+            .snippet(googlePlaceModel.vicinity)
+
+        markerOptions.icon(getCustomIcon())
+        mGoogleMap?.addMarker(markerOptions)?.tag = position
+
+    }
+
+
+    private fun getCustomIcon(): BitmapDescriptor {
+
+        val background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_location)
+        background?.setTint(resources.getColor(R.color.purple_500, null))
+        background?.setBounds(0, 0, background.intrinsicWidth, background.intrinsicHeight)
+        val bitmap = Bitmap.createBitmap(
+            background?.intrinsicWidth!!, background.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        background.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
+
+    }
+
+    override fun onSaveClick(googlePlaceModel: GooglePlaceModel) {
+        if (userSavedLocaitonId.contains(googlePlaceModel.placeId)) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Remove Place")
+                .setMessage("Are you sure to remove this place?")
+                .setPositiveButton("Yes") { _, _ ->
+                    removePlace(googlePlaceModel)
+                }
+                .setNegativeButton("No") { _, _ -> }
+                .create().show()
+        } else {
+            addPlace(googlePlaceModel)
+
+        }
+    }
+
+    override fun onDirectionClick(googlePlaceModel: GooglePlaceModel) {
+        val placeId = googlePlaceModel.placeId
+        val lat = googlePlaceModel.geometry?.location?.lat
+        val lng = googlePlaceModel.geometry?.location?.lng
+        val intent = Intent(requireContext(), DirectionActivity::class.java)
+        intent.putExtra("placeId", placeId)
+        intent.putExtra("lat", lat)
+        intent.putExtra("lng", lng)
+
+        startActivity(intent)
+    }
+
+    private fun addPlace(googlePlaceModel: GooglePlaceModel) {
+        lifecycleScope.launchWhenStarted {
+            locationViewModel.addUserPlace(googlePlaceModel, userSavedLocaitonId).collect {
+                when (it) {
+                    is State.Loading -> {
+                        if (it.flag == true) {
+                            loadingDialog.startLoading()
+                        }
+                    }
+
+                    is State.Success -> {
+                        loadingDialog.stopLoading()
+                        val placeModel: GooglePlaceModel = it.data as GooglePlaceModel
+                        userSavedLocaitonId.add(placeModel.placeId!!)
+                        val index = googlePlaceList.indexOf(placeModel)
+                        googlePlaceList[index].saved = true
+                        googlePlaceAdapter.notifyDataSetChanged()
+                        Snackbar.make(binding.root, "Saved Successfully", Snackbar.LENGTH_SHORT)
+                            .show()
+
+                    }
+                    is State.Failed -> {
+                        loadingDialog.stopLoading()
+                        Snackbar.make(
+                            binding.root, it.error,
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
+
+    override fun onMapClick(p0: LatLng) {
+        TODO("Not yet implemented")
+    }
 
 }
