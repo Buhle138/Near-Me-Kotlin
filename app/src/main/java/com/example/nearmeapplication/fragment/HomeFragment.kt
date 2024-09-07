@@ -387,6 +387,40 @@ private lateinit var binding: FragmentHomeBinding
         }
     }
 
+    private fun setUpRecyclerView() {
+        val snapHelper: SnapHelper = PagerSnapHelper()
+        googlePlaceAdapter = GooglePlaceAdapter(this)
+
+        binding.placesRecyclerView.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+            setHasFixedSize(false)
+            adapter = googlePlaceAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val linearManager = recyclerView.layoutManager as LinearLayoutManager
+                    val position = linearManager.findFirstCompletelyVisibleItemPosition()
+                    if (position > -1) {
+                        val googlePlaceModel: GooglePlaceModel = googlePlaceList[position]
+                        mGoogleMap?.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    googlePlaceModel.geometry?.location?.lat!!,
+                                    googlePlaceModel.geometry.location.lng!!
+                                ), 20f
+                            )
+                        )
+                    }
+                }
+            })
+        }
+
+        snapHelper.attachToRecyclerView(binding.placesRecyclerView)
+    }
+
 //    private fun addMarkerss(googlePlaceModel: GooglePlaceModel, position: Int) {
 //        val markerOptions = MarkerOptions()
 //            .position(
