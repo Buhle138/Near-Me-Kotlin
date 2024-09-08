@@ -468,6 +468,51 @@ private lateinit var binding: FragmentHomeBinding
 
     }
 
+    private fun removePlace(googlePlaceModel: GooglePlaceModel) {
+        userSavedLocaitonId.remove(googlePlaceModel.placeId)
+        val index = googlePlaceList.indexOf(googlePlaceModel)
+        googlePlaceList[index].saved = false
+        googlePlaceAdapter.notifyDataSetChanged()
+
+        Snackbar.make(binding.root, "Place removed", Snackbar.LENGTH_LONG)
+            .setAction("Undo") {
+                userSavedLocaitonId.add(googlePlaceModel.placeId!!)
+                googlePlaceList[index].saved = true
+                googlePlaceAdapter.notifyDataSetChanged()
+            }
+            .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar?>() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    lifecycleScope.launchWhenStarted {
+                        locationViewModel.removePlace(userSavedLocaitonId).collect {
+                            when (it) {
+                                is State.Loading -> {
+
+                                }
+
+                                is State.Success -> {
+                                    Snackbar.make(
+                                        binding.root,
+                                        it.data.toString(),
+                                        Snackbar.LENGTH_SHORT
+                                    ).show()
+
+                                }
+                                is State.Failed -> {
+                                    Snackbar.make(
+                                        binding.root, it.error,
+                                        Snackbar.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+            .show()
+
+    }
+
     override fun onSaveClick(googlePlaceModel: GooglePlaceModel) {
         if (userSavedLocaitonId.contains(googlePlaceModel.placeId)) {
             AlertDialog.Builder(requireContext())
