@@ -23,7 +23,6 @@ import com.example.nearmeapplication.models.directionPlaceModel.DirectionLegMode
 import com.example.nearmeapplication.models.directionPlaceModel.DirectionResponseModel
 import com.example.nearmeapplication.models.directionPlaceModel.DirectionRouteModel
 import com.example.nearmeapplication.permissions.AppPermissions
-import com.example.nearmeapplication.utility.LoadingDialog
 import com.example.nearmeapplication.utility.State
 import com.example.nearmeapplication.viewModels.LocationViewModel
 import com.google.android.gms.location.LocationServices
@@ -52,7 +51,7 @@ class DirectionActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isTrafficEnable = false
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<RelativeLayout>
     private lateinit var bottomSheetLayoutBinding: BottomSheetLayoutBinding
-    private lateinit var loadingDialog: LoadingDialog
+
     private lateinit var currentLocation: Location
     private var endLat: Double? = null
     private var endLng: Double? = null
@@ -76,7 +75,7 @@ class DirectionActivity : AppCompatActivity(), OnMapReadyCallback {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         appPermissions = AppPermissions()
-        loadingDialog = LoadingDialog(this)
+
 
         bottomSheetLayoutBinding = binding.bottomSheet
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayoutBinding.root)
@@ -243,12 +242,12 @@ class DirectionActivity : AppCompatActivity(), OnMapReadyCallback {
                     when (it) {
                         is State.Loading -> {
                             if (it.flag == true) {
-                                loadingDialog.startLoading()
+                                Toast.makeText(applicationContext, "Direction loading", Toast.LENGTH_LONG).show()
                             }
                         }
 
                         is State.Success -> {
-                            loadingDialog.stopLoading()
+                            Toast.makeText(applicationContext, "Loading stop", Toast.LENGTH_LONG).show()
                             clearUI()
 
                             val directionResponseModel: DirectionResponseModel =
@@ -347,7 +346,7 @@ class DirectionActivity : AppCompatActivity(), OnMapReadyCallback {
 
                         }
                         is State.Failed -> {
-                            loadingDialog.stopLoading()
+                            Toast.makeText(applicationContext, "Loading stop", Toast.LENGTH_LONG).show()
                             Snackbar.make(
                                 binding.root, it.error,
                                 Snackbar.LENGTH_SHORT

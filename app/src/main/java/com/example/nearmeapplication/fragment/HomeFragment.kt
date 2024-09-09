@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.example.nearmeapplication.R
+import com.example.nearmeapplication.activities.DirectionActivity
 import com.example.nearmeapplication.adapter.GooglePlaceAdapter
 import com.example.nearmeapplication.adapter.InfoWindowAdapter
 import com.example.nearmeapplication.databinding.FragmentHomeBinding
@@ -35,7 +36,6 @@ import com.example.nearmeapplication.interfaces.NearLocationInterface
 import com.example.nearmeapplication.models.googlePlaceModel.GooglePlaceModel
 import com.example.nearmeapplication.models.googlePlaceModel.GoogleResponseModel
 import com.example.nearmeapplication.permissions.AppPermissions
-import com.example.nearmeapplication.utility.LoadingDialog
 import com.example.nearmeapplication.utility.State
 import com.example.nearmeapplication.viewModels.LocationViewModel
 import com.example.nearmekotlindemo.constant.AppConstant
@@ -53,9 +53,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.example.nearmeapplication.activities.DirectionActivity
-
 
 
 class HomeFragment : Fragment(), OnMapReadyCallback, NearLocationInterface, GoogleMap.OnMapClickListener {
@@ -63,7 +62,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, NearLocationInterface, Goog
 private lateinit var binding: FragmentHomeBinding
     private var mGoogleMap: GoogleMap? = null
     private lateinit var appPermission: AppPermissions
-    private lateinit var loadingDialog: LoadingDialog
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private var permissionToRequest = mutableListOf<String>()
     private var isLocationPermissionOk = false
@@ -92,7 +90,7 @@ private lateinit var binding: FragmentHomeBinding
         super.onViewCreated(view, savedInstanceState)
 
         appPermission = AppPermissions()
-        loadingDialog = LoadingDialog(requireActivity())
+
 
         permissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -391,7 +389,7 @@ private lateinit var binding: FragmentHomeBinding
 
                     }
                     is State.Failed -> {
-                        loadingDialog.stopLoading()
+                        Toast.makeText(requireContext(), "stop loading state failed", Toast.LENGTH_SHORT).show()
                         Snackbar.make(
                             binding.root, it.error,
                             Snackbar.LENGTH_SHORT
@@ -547,12 +545,12 @@ private lateinit var binding: FragmentHomeBinding
                 when (it) {
                     is State.Loading -> {
                         if (it.flag == true) {
-                            loadingDialog.startLoading()
+                            Toast.makeText(requireContext(), "dialog start loading", Toast.LENGTH_SHORT).show()
                         }
                     }
 
                     is State.Success -> {
-                        loadingDialog.stopLoading()
+                        Toast.makeText(requireContext(), "dialog stop loading", Toast.LENGTH_SHORT).show()
                         val placeModel: GooglePlaceModel = it.data as GooglePlaceModel
                         userSavedLocaitonId.add(placeModel.placeId!!)
                         val index = googlePlaceList.indexOf(placeModel)
@@ -563,7 +561,7 @@ private lateinit var binding: FragmentHomeBinding
 
                     }
                     is State.Failed -> {
-                        loadingDialog.stopLoading()
+                        Toast.makeText(requireContext(), "dialog stop loading", Toast.LENGTH_SHORT).show()
                         Snackbar.make(
                             binding.root, it.error,
                             Snackbar.LENGTH_SHORT
