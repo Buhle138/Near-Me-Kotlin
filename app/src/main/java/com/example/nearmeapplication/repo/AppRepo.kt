@@ -40,7 +40,7 @@ class AppRepo {
         val data = auth.signInWithEmailAndPassword(email, password).await()
         data?.let {
             if (auth.currentUser?.isEmailVerified!!) {
-                emit(State.success("Login Successfully"))
+                emit(State.success("Login Successfullys"))
             } else {
                 auth.currentUser?.sendEmailVerification()?.await()
                 emit(State.failed("Verify email first"))
